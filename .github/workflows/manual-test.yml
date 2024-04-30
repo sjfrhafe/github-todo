@@ -7,7 +7,7 @@ jobs:
     steps:
       - name: Run the action
         id: todo-action
-        uses: sjfrhafe/github-todo@v0
+        uses: sjfrhafe/github-todo@v0.0.3
         with:
           todo-keyword: 'todo'
           comment-style: '//, #, /*, *, */'

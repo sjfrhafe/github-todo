@@ -1,5 +1,4 @@
 import { getInput, setFailed, setOutput } from '@actions/core';
-import { context } from '@actions/github';
 
 try {
   const todoKeyword = getInput('todo-keyword');

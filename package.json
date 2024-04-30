@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "tsc && ncc build dist/index.js"
+    "package": "npx ncc build src/index.ts -o dist --source-map"
   },
   "keywords": [],
   "author": "",

@@ -1,0 +1,16 @@
+on: [push]
+
+jobs:
+  todo-job:
+    runs-on: ubuntu-latest
+    name: Manually Test Todo Action
+    steps:
+      - name: Run the action
+        id: todo-action
+        uses: sjfrhafe/github-todo
+        with:
+          todo-keyword: 'todo'
+          comment-style: '//, #, /*, *, */'
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Get the output
+        run: echo ${{ steps.hello.outputs.time }}

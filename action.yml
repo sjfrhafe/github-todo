@@ -1,0 +1,21 @@
+
+name: '@sjfrhafe/github-todo'
+description: 'Find todos in your codebase'
+inputs:
+  todo-keyword:  # id of input
+    description: 'The keyword to look for in your codebase'
+    required: false
+    default: 'todo'
+  comment-style:
+    description: 'Comma separated list of comment styles to look for todos in.'
+    required: false
+    default: '//, #, /*, *, */'
+  github-token:
+    description: 'The GitHub token to use for authentication'
+    required: true
+outputs:
+  code-snippets: # id of output
+    description: 'The code comment snippets that contain the todo keyword'
+runs:
+  using: 'node20'
+  main: 'dist/index.js'

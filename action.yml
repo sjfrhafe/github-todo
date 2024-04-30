@@ -1,5 +1,5 @@
 
-name: '@sjfrhafe/github-todo'
+name: 'github-todo'
 description: 'Find todos in your codebase'
 inputs:
   todo-keyword:  # id of input

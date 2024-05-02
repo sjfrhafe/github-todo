@@ -1,28 +1,39 @@
 import { getInput, setFailed, setOutput } from '@actions/core';
 import { context } from '@actions/github';
-import { GithubApi } from './api/github';
+import { CommentedFile } from './extractor/commentedFile';
+import { todoExtractSaga } from './extractor/extract.saga';
+import { downloadSaga } from './github/download.saga';
+import { searchSaga } from './github/search.saga';
+import { markdownSaga } from './markdown/markdown.saga';
 
 const run = async (): Promise<void> => {
   try {
-    //gathering facts
-    //todo improve something
     const todoKeyword = getInput('todo-keyword');
     const commentStyle = getInput('comment-style');
-    const token = getInput('github-token');
-    const repository = context.repo.repo;
+    const ghToken = getInput('github-token');
+    const repository = `${context.repo.owner}/${context.repo.repo}`;
 
     console.log(
       `Starting todo action with todo-keyword: ${todoKeyword} and comment-style: ${commentStyle} in repository: ${repository}`,
     );
 
-    //fetching data from github
-    const githubApi = new GithubApi(token);
+    const files = await searchSaga(
+      ghToken,
+      'sipgate/project-platypus',
+      todoKeyword,
+    );
+    const downloadedFiles = await downloadSaga(ghToken, files);
 
-    const searchResults = await githubApi.searchTodoInRepository(repository);
+    const commentedFiles: CommentedFile[] = downloadedFiles.map((file) =>
+      todoExtractSaga(file, 3, todoKeyword, commentStyle),
+    );
 
-    console.log('searchResults', searchResults);
+    const markdown = commentedFiles
+      .filter((commentedFile) => commentedFile.comments.length > 0)
+      .map((commentedFile) => markdownSaga(commentedFile))
+      .join('\n\n');
 
-    setOutput('code-snippets', 'hello world');
+    setOutput('code-snippets', markdown);
   } catch (error: unknown) {
     setFailed('something went wrong');
   }

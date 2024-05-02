@@ -1,4 +1,5 @@
-on: [push]
+on:
+  workflow_dispatch
 
 jobs:
   todo-job:
@@ -12,5 +13,3 @@ jobs:
           todo-keyword: 'todo'
           comment-style: '//, #, /*, *, */'
           github-token: ${{ secrets.GITHUB_TOKEN }}
-      - name: Get the output
-        run: echo ${{ steps.todo-action.outputs.code-snippets }}

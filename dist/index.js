@@ -29188,35 +29188,155 @@ function wrappy (fn, cb) {
 
 /***/ }),
 
-/***/ 7693:
+/***/ 8072:
 /***/ ((__unused_webpack_module, exports) => {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.GithubApi = void 0;
-class GithubApi {
+exports.todoExtractSaga = void 0;
+const checkIfComment = (line, commentStyle) => {
+    const commentStyles = commentStyle.split(',').map((style) => style.trim());
+    return commentStyles.some((style) => line.includes(style));
+};
+const checkIfTodo = (line, todoKeyword) => {
+    return line.toUpperCase().includes(todoKeyword.toUpperCase());
+};
+const getTodoLineIndexes = (content, todoKeyword, commentStyle) => {
+    const lines = content.split('\n');
+    return lines.reduce((acc, line, index) => {
+        if (checkIfComment(line, commentStyle) && checkIfTodo(line, todoKeyword)) {
+            acc.push(index);
+        }
+        return acc;
+    }, []);
+};
+const getBoundaries = (index, radius, length) => {
+    const start = Math.max(0, index - radius);
+    const end = Math.min(length, index + radius + 1);
+    return {
+        start,
+        end,
+    };
+};
+const todoExtractSaga = (file, radius, todoKeyword, commentStyle) => {
+    const todoLineIndexes = getTodoLineIndexes(file.content, todoKeyword, commentStyle);
+    const comments = [];
+    for (const index of todoLineIndexes) {
+        const { start, end } = getBoundaries(index, radius, file.lines.length);
+        const collision = comments.find((comment) => comment.end >= start);
+        if (collision) {
+            collision.end = end;
+            continue;
+        }
+        comments.push({
+            start,
+            end,
+        });
+    }
+    return Object.assign(Object.assign({}, file), { comments });
+};
+exports.todoExtractSaga = todoExtractSaga;
+
+
+/***/ }),
+
+/***/ 7313:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+
+"use strict";
+
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.downloadSaga = void 0;
+const github_client_1 = __nccwpck_require__(5467);
+const downloadSaga = (githubToken, files) => __awaiter(void 0, void 0, void 0, function* () {
+    const githubApi = new github_client_1.GithubApiClient(githubToken);
+    const downloadedFiles = yield Promise.all(files.map((file) => __awaiter(void 0, void 0, void 0, function* () {
+        const content = yield githubApi.fetchFile(file.url);
+        return Object.assign(Object.assign({}, file), { content, lines: content.split('\n') });
+    })));
+    return downloadedFiles;
+});
+exports.downloadSaga = downloadSaga;
+
+
+/***/ }),
+
+/***/ 5467:
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.GithubApiClient = void 0;
+class GithubApiClient {
     constructor(token) {
         this.token = token;
-        this.searchTodoInRepository = (repository) => {
-            const url = `https://api.github.com/search/code?q=todo+in:file+repo:${repository}`;
+        this.searchTodoInRepository = (repository, todoKeyword) => {
+            const url = `https://api.github.com/search/code?q=${todoKeyword}+in:file+repo:${repository}`;
             return fetch(url, {
                 headers: {
                     Authorization: `Bearer ${this.token}`,
                 },
-            }).then((response) => response.json());
-            // .then((data) => data.items);
+            })
+                .then((response) => response.json())
+                .then((data) => data.items);
         };
         this.fetchFile = (url) => {
             return fetch(url, {
                 headers: {
                     Authorization: `Bearer ${this.token}`,
                 },
-            }).then((response) => response.json());
+            })
+                .then((response) => response.json())
+                .then((data) => data.content)
+                .then((content) => Buffer.from(content, 'base64').toString('utf-8'));
         };
     }
 }
-exports.GithubApi = GithubApi;
+exports.GithubApiClient = GithubApiClient;
+
+
+/***/ }),
+
+/***/ 2675:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+
+"use strict";
+
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.searchSaga = void 0;
+const github_client_1 = __nccwpck_require__(5467);
+const searchSaga = (githubToken, repoName, todoKeyword) => __awaiter(void 0, void 0, void 0, function* () {
+    const githubApi = new github_client_1.GithubApiClient(githubToken);
+    const respondedItems = (yield githubApi.searchTodoInRepository(repoName, todoKeyword));
+    return respondedItems.map((item) => ({
+        name: item.name,
+        path: item.path,
+        url: item.url,
+        html_url: item.html_url,
+        file: item.file,
+    }));
+});
+exports.searchSaga = searchSaga;
 
 
 /***/ }),
@@ -29238,27 +29358,57 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const core_1 = __nccwpck_require__(2186);
 const github_1 = __nccwpck_require__(5438);
-const github_2 = __nccwpck_require__(7693);
+const extract_saga_1 = __nccwpck_require__(8072);
+const download_saga_1 = __nccwpck_require__(7313);
+const search_saga_1 = __nccwpck_require__(2675);
+const markdown_saga_1 = __nccwpck_require__(5528);
 const run = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        //gathering facts
-        //todo improve something
         const todoKeyword = (0, core_1.getInput)('todo-keyword');
         const commentStyle = (0, core_1.getInput)('comment-style');
-        const token = (0, core_1.getInput)('github-token');
-        const repository = github_1.context.repo.repo;
+        const ghToken = (0, core_1.getInput)('github-token');
+        const repository = `${github_1.context.repo.owner}/${github_1.context.repo.repo}`;
         console.log(`Starting todo action with todo-keyword: ${todoKeyword} and comment-style: ${commentStyle} in repository: ${repository}`);
-        //fetching data from github
-        const githubApi = new github_2.GithubApi(token);
-        const searchResults = yield githubApi.searchTodoInRepository(repository);
-        console.log('searchResults', searchResults);
-        (0, core_1.setOutput)('code-snippets', 'hello world');
+        const files = yield (0, search_saga_1.searchSaga)(ghToken, 'sipgate/project-platypus', todoKeyword);
+        const downloadedFiles = yield (0, download_saga_1.downloadSaga)(ghToken, files);
+        const commentedFiles = downloadedFiles.map((file) => (0, extract_saga_1.todoExtractSaga)(file, 3, todoKeyword, commentStyle));
+        const markdown = commentedFiles
+            .filter((commentedFile) => commentedFile.comments.length > 0)
+            .map((commentedFile) => (0, markdown_saga_1.markdownSaga)(commentedFile))
+            .join('\n\n');
+        (0, core_1.setOutput)('code-snippets', markdown);
     }
     catch (error) {
         (0, core_1.setFailed)('something went wrong');
     }
 });
 run();
+
+
+/***/ }),
+
+/***/ 5528:
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.markdownSaga = void 0;
+const multilineCodeBlock = (content) => `${'\n```\n'}${content}${'\n```\n'}`;
+const concatLinesWithNumbers = (lines, startLine) => {
+    return lines
+        .map((line, index) => `${startLine + index + 1}|    ${line}`)
+        .join('\n');
+};
+const markdownSaga = (commentedFile) => {
+    let markdown = '';
+    markdown += `[${commentedFile.name}](<${commentedFile.url}>)\n`;
+    markdown += multilineCodeBlock(commentedFile.comments
+        .map((comment) => concatLinesWithNumbers(commentedFile.lines.slice(comment.start, comment.end), comment.start))
+        .join('\n...\n'));
+    return markdown;
+};
+exports.markdownSaga = markdownSaga;
 
 
 /***/ }),

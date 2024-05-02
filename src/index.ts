@@ -35,6 +35,7 @@ const run = async (): Promise<void> => {
 
     setOutput('code-snippets', markdown);
   } catch (error: unknown) {
+    console.log(error);
     setFailed('something went wrong');
   }
 };

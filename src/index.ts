@@ -54,7 +54,6 @@ const run = async (): Promise<void> => {
       ),
     );
 
-    writeFileSync('todos.json', markdown);
     setOutput('code-snippets', markdown);
   } catch (error: unknown) {
     console.log(error);

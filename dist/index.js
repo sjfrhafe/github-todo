@@ -29381,7 +29381,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const core_1 = __nccwpck_require__(2186);
 const github_1 = __nccwpck_require__(5438);
-const fs_1 = __nccwpck_require__(7147);
 const extract_saga_1 = __nccwpck_require__(8072);
 const download_saga_1 = __nccwpck_require__(7313);
 const search_saga_1 = __nccwpck_require__(2675);
@@ -29412,7 +29411,6 @@ const run = () => __awaiter(void 0, void 0, void 0, function* () {
         const commentedFiles = downloadedFiles.map((file) => (0, extract_saga_1.todoExtractSaga)(file, 3, todoKeyword, commentStyle));
         const render = yield getRenderMethod(flavor);
         const markdown = render(commentedFiles.filter((commentedFile) => commentedFile.comments.length > 0));
-        (0, fs_1.writeFileSync)('todos.json', markdown);
         (0, core_1.setOutput)('code-snippets', markdown);
     }
     catch (error) {

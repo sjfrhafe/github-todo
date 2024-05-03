@@ -10,7 +10,7 @@ const concatLinesWithNumbers = (lines: string[], startLine: number): string => {
     .join('\n');
 };
 
-const renderOne = (commentedFile: CommentedFile): string => {
+const renderOne = (commentedFile: CommentedFile) => {
   let markdown = '';
 
   markdown += `<${commentedFile.url}|${commentedFile.name}>`;
@@ -26,24 +26,20 @@ const renderOne = (commentedFile: CommentedFile): string => {
       .join('\n...\n'),
   );
 
-  return markdown;
+  return {
+    type: 'section',
+    text: {
+      type: 'mrkdwn',
+      text: markdown,
+    },
+  };
 };
 
 export const render: RenderMethod = (
   commentedFiles: CommentedFile[],
 ): string => {
-  const markdown = commentedFiles.map(renderOne).join('\n\n');
-
   const slackMessage = {
-    blocks: [
-      {
-        type: 'section',
-        text: {
-          type: 'mrkdwn',
-          text: markdown,
-        },
-      },
-    ],
+    blocks: commentedFiles.map(renderOne),
   };
 
   return JSON.stringify(slackMessage);

@@ -1,4 +1,12 @@
 import { Comment, CommentedFile } from '../extractor/commentedFile';
+import { RenderMethod } from './render.interface';
+
+// const link = (url: string, text: string, flavor: Flavor) => {
+//   if (flavor === Flavor.SLACK) {
+//     return `<${url}|${text}>`;
+//   }
+//   return;
+// };
 
 const multilineCodeBlock = (content: string) =>
   `${'\n```\n'}${content}${'\n```\n'}`;
@@ -9,10 +17,10 @@ const concatLinesWithNumbers = (lines: string[], startLine: number): string => {
     .join('\n');
 };
 
-export const markdownSaga = (commentedFile: CommentedFile): string => {
+const renderOne = (commentedFile: CommentedFile): string => {
   let markdown = '';
 
-  markdown += `[${commentedFile.name}](<${commentedFile.url}>)\n`;
+  markdown += `[${commentedFile.name}](${commentedFile.url})`;
 
   markdown += multilineCodeBlock(
     commentedFile.comments
@@ -26,4 +34,10 @@ export const markdownSaga = (commentedFile: CommentedFile): string => {
   );
 
   return markdown;
+};
+
+export const render: RenderMethod = (
+  commentedFiles: CommentedFile[],
+): string => {
+  return commentedFiles.map(renderOne).join('\n\n');
 };

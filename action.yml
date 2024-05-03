@@ -10,6 +10,10 @@ inputs:
     description: 'Comma separated list of comment styles to look for todos in.'
     required: false
     default: '//, #, /*, *, */'
+  flavor:
+    description: 'The flavor of markdown to use for the output. [markdown, slack]'
+    required: false
+    default: 'markdown'
   github-token:
     description: 'The GitHub token to use for authentication'
     required: true

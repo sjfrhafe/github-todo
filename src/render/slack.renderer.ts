@@ -39,7 +39,6 @@ export const render: RenderMethod = (
   commentedFiles: CommentedFile[],
 ): string => {
   const slackMessage = {
-    text: 'Here are the files with TODOs:',
     blocks: commentedFiles.map(renderOne),
   };
 

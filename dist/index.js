@@ -29505,7 +29505,6 @@ const renderOne = (commentedFile) => {
 };
 const render = (commentedFiles) => {
     const slackMessage = {
-        text: 'Here are the files with TODOs:',
         blocks: commentedFiles.map(renderOne),
     };
     return JSON.stringify(slackMessage);

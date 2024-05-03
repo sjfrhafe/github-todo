@@ -1,5 +1,6 @@
 import { getInput, setFailed, setOutput } from '@actions/core';
 import { context } from '@actions/github';
+import { writeFileSync } from 'fs';
 import { CommentedFile } from './extractor/commentedFile';
 import { todoExtractSaga } from './extractor/extract.saga';
 import { downloadSaga } from './github/download.saga';
@@ -53,6 +54,7 @@ const run = async (): Promise<void> => {
       ),
     );
 
+    writeFileSync('todos.json', markdown);
     setOutput('code-snippets', markdown);
   } catch (error: unknown) {
     console.log(error);

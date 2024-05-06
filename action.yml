@@ -2,7 +2,7 @@
 name: 'github-todo'
 description: 'Find todos in your codebase'
 inputs:
-  todo-keyword:  # id of input
+  todo-keyword:  
     description: 'The keyword to look for in your codebase'
     required: false
     default: 'todo'
@@ -18,7 +18,7 @@ inputs:
     description: 'The GitHub token to use for authentication'
     required: true
 outputs:
-  code-snippets: # id of output
+  code-snippets: 
     description: 'The code comment snippets that contain the todo keyword'
 runs:
   using: 'node20'

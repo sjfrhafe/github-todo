@@ -1,6 +1,5 @@
 import { getInput, setFailed, setOutput } from '@actions/core';
 import { context } from '@actions/github';
-import { writeFileSync } from 'fs';
 import { CommentedFile } from './extractor/commentedFile';
 import { todoExtractSaga } from './extractor/extract.saga';
 import { downloadSaga } from './github/download.saga';

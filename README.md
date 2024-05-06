@@ -17,7 +17,7 @@ jobs:
     steps:
       - name: Analyse Todos
         id: todo-action
-        uses: sjfrhafe/github-todo@main
+        uses: sjfrhafe/github-todo@v1
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
       - name: Do something with markdown
@@ -41,7 +41,7 @@ jobs:
     steps:
       - name: Analyse Todos
         id: todo-action
-        uses: sjfrhafe/github-todo@main
+        uses: sjfrhafe/github-todo@v1
         with:
           todo-keyword: 'todo'
           comment-style: '//, #, /*, *, */'
@@ -69,7 +69,7 @@ jobs:
     steps:
       - name: Analyse Todos
         id: todo-action
-        uses: sjfrhafe/github-todo@main
+        uses: sjfrhafe/github-todo@v1
         with:
           flavor: 'slack'
           github-token: ${{ secrets.GITHUB_TOKEN }}

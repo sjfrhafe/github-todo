@@ -1,6 +1,5 @@
-import { todo } from 'node:test';
 import { DownloadedFile } from '../github/file.model';
-import { Comment, CommentedFile } from './commentedFile';
+import { Comment } from './commentedFile';
 
 const checkIfComment = (line: string, commentStyle: string) => {
   const commentStyles = commentStyle.split(',').map((style) => style.trim());

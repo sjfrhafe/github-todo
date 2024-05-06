@@ -29446,12 +29446,6 @@ var Flavor;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.render = void 0;
-// const link = (url: string, text: string, flavor: Flavor) => {
-//   if (flavor === Flavor.SLACK) {
-//     return `<${url}|${text}>`;
-//   }
-//   return;
-// };
 const multilineCodeBlock = (content) => `${'\n```\n'}${content}${'\n```\n'}`;
 const concatLinesWithNumbers = (lines, startLine) => {
     return lines

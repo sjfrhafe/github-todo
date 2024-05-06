@@ -1,13 +1,6 @@
 import { Comment, CommentedFile } from '../extractor/commentedFile';
 import { RenderMethod } from './render.interface';
 
-// const link = (url: string, text: string, flavor: Flavor) => {
-//   if (flavor === Flavor.SLACK) {
-//     return `<${url}|${text}>`;
-//   }
-//   return;
-// };
-
 const multilineCodeBlock = (content: string) =>
   `${'\n```\n'}${content}${'\n```\n'}`;
 

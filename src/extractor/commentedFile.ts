@@ -1,4 +1,4 @@
-import { DownloadedFile, TargetFile } from '../github/file.model';
+import { DownloadedFile } from '../github/file.model';
 
 export type Comment = {
   start: number;
